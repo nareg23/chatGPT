@@ -1,9 +1,11 @@
 "use client";
 
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import { serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
+import { toast } from "react-hot-toast";
+import { db } from "../lib/firebase";
 
 type Props = {
   chatId: string;
@@ -12,6 +14,8 @@ type Props = {
 const ChatInput = ({ chatId }: Props) => {
   const [prompt, setPrompt] = useState("");
   const { data: session } = useSession();
+
+  const model = "model";
 
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,6 +35,39 @@ const ChatInput = ({ chatId }: Props) => {
           `https://ui-avatars.com/api/?name=${session?.user?.name}`,
       },
     };
+
+    // write
+    await addDoc(
+      collection(
+        db,
+        "users",
+        session?.user?.email!,
+        "chats",
+        chatId,
+        "messages"
+      ),
+
+      message
+    ).catch((e) => console.log(e));
+
+    const notify = toast.loading("Chat GPT is thinking...");
+
+    await fetch("/api/askQuestion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt,
+        chatId,
+        model,
+        session,
+      }),
+    }).then(() => {
+      toast.success("Chat GPT has responded", {
+        id: notify,
+      });
+    });
   };
 
   return (

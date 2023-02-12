@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import "../styles/globals.css";
 import Login from "../components/Login";
+import ClientProvider from "../components/ClientProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: Props) {
                 <Sidebar />
               </div>
 
+              <ClientProvider />
               <div className="bg-[#343541] flex-1">{children}</div>
             </div>
           )}

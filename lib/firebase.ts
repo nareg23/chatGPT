@@ -1,5 +1,5 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { Firestore, getFirestore } from "firebase/firestore";
 
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
@@ -11,7 +11,15 @@ const firebaseConfig = {
   appId: "1:364021754346:web:278c6a5c41f3d085886a93",
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const db = getFirestore(app);
+let db: Firestore;
+try {
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  db = getFirestore(app);
+} catch (err: any) {
+  console.log({
+    msg: "Unable to connect firebase",
+    error: err?.message!,
+  });
+}
 
 export { db };
