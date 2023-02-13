@@ -4,9 +4,10 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { FC } from "react";
 import { db } from "../lib/firebase";
 
-const NewChatBtn = () => {
+const NewChatBtn: FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
 

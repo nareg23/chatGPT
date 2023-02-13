@@ -17,13 +17,13 @@ const ChatRow = ({ id }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
   const [active, setActive] = useState(false);
-  console.log("is this server?");
 
   const [messages] = useCollection(
     query(
       collection(db, "users", session?.user?.email!, "chats", id, "messages"),
       orderBy("createdAt", "asc")
-    )
+    ),
+    { snapshotListenOptions: { includeMetadataChanges: true } }
   );
 
   useEffect(() => {
@@ -32,8 +32,9 @@ const ChatRow = ({ id }: Props) => {
   }, [pathname, id]);
 
   const deleteChat = async () => {
-    await deleteDoc(doc(db, "users", session?.user?.email!, "chats", id));
-    router.replace("/");
+    await deleteDoc(doc(db, "users", session?.user?.email!, "chats", id)).then(
+      () => router.replace("/")
+    );
   };
 
   return (
