@@ -13,7 +13,7 @@ const Login = () => {
           signIn("google");
         }}
       >
-        Sing In to use GPT
+        Sign In to use GPT
       </button>
     </div>
   );
